@@ -1,39 +1,41 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');  // For resolving file paths
+const path = require('path');
+// Removed: const dotenv = require('dotenv');
 const apiRoutes = require('./routes/api');
-const { sequelize } = require('./models');  // Ensure sequelize is exported from models/index.js
+const { sequelize } = require('./models');
+
+// Removed: dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const { PORT } = process.env; // Relying on config/config.js to set PORT
 
 // Middleware
 app.use(bodyParser.json());
-app.use(express.json());  // Use middleware to parse JSON bodies
+app.use(express.json());
 
 // Serve static files from the 'static' folder
-app.use(express.static(path.join('static')));  // Add this line to serve static files
+app.use(express.static(path.join(__dirname, '../static'))); // Updated path
 
 // Use API routes
 app.use('/api', apiRoutes);
 
-// Optionally, handle the root route to serve the index.html file
+// Handle root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join('static', 'index.html')); 
+  res.sendFile(path.join(__dirname, '../static', 'index.html')); // Updated path
 });
 
-if (process.env.NODE_ENV !== 'test') {
-  sequelize.authenticate()
-    .then(() => {
-      console.log('Database connected.');
-      return sequelize.sync(); // Ensure all models are synced
-    })
-    .then(() => {
-      app.listen(PORT, () => console.log(`Server is up on port ${PORT}`));
-    })
-    .catch((err) => {
-      console.error('Unable to connect to the database:', err);
-    });
-}
+// Authenticate and sync database
+sequelize.authenticate()
+  .then(() => {
+    console.log('Database connected.');
+    return sequelize.sync();
+  })
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 module.exports = app;
