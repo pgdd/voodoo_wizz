@@ -5,6 +5,7 @@ const {
   updateGame,
   deleteGame,
   getAllGames,
+  searchGames,
 } = require('../controllers/gamesController');
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get('/:id', getGame);
 router.put('/:id', updateGame);
 router.delete('/:id', deleteGame);
 router.get('/', getAllGames);
+router.post('/search', searchGames);
 
 module.exports = router;

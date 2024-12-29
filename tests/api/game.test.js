@@ -16,7 +16,7 @@ const gameData = {
 describe('Game CRUD Operations', () => {
   let gameId; // Store the ID of the created game for future tests
 
-  // Create Game (POST)
+  // CREATE Game (POST)
   it('should create a game and respond with 201', async () => {
     const response = await request(app)
       .post('/api/games')
@@ -66,9 +66,8 @@ describe('Game CRUD Operations', () => {
     assert.strictEqual(body.isPublished, gameData.isPublished);
   });
 
-  // Update Game (PUT)
+  // UPDATE Game (PUT)
   it('should update the game details', async () => {
-    // Create the game again to get a new gameId since DB is cleared before each test
     const response = await request(app)
       .post('/api/games')
       .send(gameData)
@@ -92,9 +91,8 @@ describe('Game CRUD Operations', () => {
     assert.strictEqual(body.appVersion, '1.0.1'); // Check updated field
   });
 
-  // Delete Game (DELETE)
+  // DELETE Game (DELETE)
   it('should delete the game by ID', async () => {
-    // Create the game again to get a new gameId since DB is cleared before each test
     const response = await request(app)
       .post('/api/games')
       .send(gameData)
@@ -114,7 +112,6 @@ describe('Game CRUD Operations', () => {
 
   // Ensure the game was actually deleted (GET after DELETE)
   it('should return 404 when trying to get the deleted game', async () => {
-    // Create the game again to get a new gameId since DB is cleared before each test
     const response = await request(app)
       .post('/api/games')
       .send(gameData)
@@ -136,5 +133,61 @@ describe('Game CRUD Operations', () => {
       .expect(404); // Expect 404 (Not Found)
 
     assert.strictEqual(getResponse.body.message, 'Game not found');
+  });
+});
+
+// Game Search API
+describe('Game Search API', () => {
+  it('should return games that match the name', async () => {
+    await request(app)
+      .post('/api/games')
+      .send(gameData)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const response = await request(app)
+      .post('/api/games/search')
+      .send({ name: 'Super Adventure' })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body } = response;
+    assert.strictEqual(body.length, 1);
+    assert.strictEqual(body[0].name, 'Super Adventure');
+  });
+
+  it('should return games that match the platform', async () => {
+    await request(app)
+      .post('/api/games')
+      .send(gameData)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const response = await request(app)
+      .post('/api/games/search')
+      .send({ platform: 'ios' })
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body } = response;
+    assert.strictEqual(body.length, 1);
+    assert.strictEqual(body[0].platform, 'ios');
+  });
+
+  it('should return all games if neither name nor platform is provided', async () => {
+    await request(app)
+      .post('/api/games')
+      .send(gameData)
+      .set('Accept', 'application/json')
+      .expect(201);
+
+    const response = await request(app)
+      .post('/api/games/search')
+      .send({})
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const { body } = response;
+    assert.strictEqual(body.length, 1);
   });
 });
