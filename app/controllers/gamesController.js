@@ -1,5 +1,5 @@
+const { Op } = require('sequelize'); // Import Op from Sequelize
 const { Game } = require('../models'); // Import Game model
-
 // Create a new game
 const createGame = async (req, res) => {
   const { publisherId, name, platform, storeId, bundleId, appVersion, isPublished } = req.body;
@@ -163,10 +163,45 @@ const getAllGames = async (req, res) => {
   }
 };
 
+// Search games by name and/or platform
+const searchGames = async (req, res) => {
+  const { name, platform } = req.body;
+
+  try {
+    // If no search criteria is provided, return all games
+    if (!name && !platform) {
+      const games = await Game.findAll(); // Return all games
+      return res.json(games);
+    }
+
+    // Build the search query
+    const query = {};
+    if (name) {
+      query.name = {
+        [Op.like]: `%${name}%`, // Partial match for name
+      };
+    }
+    if (platform) {
+      query.platform = platform; // Exact match for platform
+    }
+
+    // Fetch matching games from the database
+    const games = await Game.findAll({
+      where: query,
+    });
+
+    return res.json(games); // Return the found games
+  } catch (err) {
+    console.error('Error searching for games:', err);
+    return res.status(500).json({ message: 'Error searching for games', error: err });
+  }
+};
+
 module.exports = {
   createGame,
   getGame,
   updateGame,
   deleteGame,
   getAllGames,
+  searchGames,
 };
