@@ -179,7 +179,7 @@
       },
       addGame (game) {
         return axios.post(this.apiURL, game)
-          .then((response) => {
+          .then(response => {
             const copy = this.games.slice()
             copy.push(response.data)
             this.games = copy
@@ -187,7 +187,7 @@
       },
       updateGame (game) {
         return axios.put(`${this.apiURL}/${game.id}`, game)
-          .then((response) => {
+          .then(response => {
             const copy = this.games.slice()
             const idx = copy.findIndex((c) => c.id === response.data.id)
             copy[idx] = response.data
@@ -197,7 +197,7 @@
       deleteGame (game) {
         console.log('deleting', game)
         return axios.delete(`${this.apiURL}/${game.id}`)
-          .then((response) => {
+          .then(response => {
             let copy = this.games.slice()
             const idx = copy.findIndex((c) => c.id === response.data.id)
             copy.splice(idx, 1)
@@ -207,7 +207,7 @@
     },
     beforeMount () {
       axios.get(this.apiURL)
-        .then((response) => {
+        .then(response => {
           this.games = response.data
         })
     }
