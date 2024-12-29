@@ -51,22 +51,198 @@ The second component is an Express-based API server that queries and delivers da
 
 This code is not necessarily representative of what you would find in a Voodoo production-ready codebase.  However, this type of stack is in regular use at Voodoo.
 
+
 # Project Setup
-You will need to have Node.js, NPM, and git installed locally.  You should not need anything else.
 
-To get started, initialize a local git repo by going into the root of this project and running `git init`.  Then run `git add .` to add all of the relevant files.  Then `git commit` to complete the repo setup.  You will send us this repo as your final product.
-  
-Next, in a terminal, run `npm install` from the project root to initialize your dependencies.
+## Prerequisites
 
-Finally, to start the application, navigate to the project root in a terminal window and execute `npm start`
+ - Before starting the setup, make sure you have the following   
+   installed:
 
-You should now be able to navigate to http://localhost:3000 and view the UI.
+	 - Node.js 
+	 - NPM 
+	 - Git Environment Setup
 
-You should also be able to communicate with the API at http://localhost:3000/api/games
+- Clone the repository: First, clone the repository to your local
+  machine:
 
-If you get an error like this when trying to build the project: `ERROR: Please install sqlite3 package manually` you should run `npm rebuild` from the project root.
+```bash
+git clone git@github.com:pgdd/voodoo_wizz.git
+cd voodoo_wizz.git
+```
+ - Create environment files:
 
+```bash
+cp .env.example .env.development
+cp .env.example .env.test
+```
+
+ - Configure each .env file:
+
+Example .env.development configuration (for local development):
+
+```bash
+# Environment: Development
+# This configuration is used for the local development environment.
+
+NODE_ENV=development    # Specifies the environment (development)
+PORT=3000               # Port on which the app runs in development
+DB_NAME=database.sqlite3 # SQLite database name for development
+DB_USERNAME=null        # Username for database (if applicable)
+DB_PASSWORD=null        # Password for database (if applicable)
+DB_DIALECT=sqlite
+DB_PORT=null
+```
+Example .env.test configuration (for testing):
+```bash
+# Environment: Test
+# This configuration is used for testing purposes.
+
+NODE_ENV=test           # Specifies the environment (test)
+PORT=3001               # Port on which the app runs in test environment
+DB_NAME=database_test.sqlite3  # SQLite database name for testing
+DB_PORT=null
+
+# Database configurations for testing
+DB_USERNAME=null        # Username for database (if applicable)
+DB_PASSWORD=null        # Password for database (if applicable)
+DB_DIALECT=sqlite       # Dialect to use with SQLite in testing
+```
+
+> Note: For Windows compatibility, you may want to add the cross-env
+> package to handle environment variables.
+
+## Installation & Development
+
+**Installation dependencies**
+```bash
+npm install
+```
+- **Start Development Server**
+
+```bash
+npm run dev
+```
+This command will:
+
+ 1. Run ESLint checks 
+ 2. Reset the development database 
+ 3. Run migrations and seeds 
+ 4. Start the server with PM2 in development mode
+
+**Running Tests**
+```bash
+npm run test
+```
+This command will:
+ 1. Prepare the test environment
+ 2. Run migrations for the test database
+ 3. Execute the test suites
+
+**Available Scripts**
+
+*Development*
+`npm run dev`: Full development setup and server start
+`npm run eslint`: Run ESLint with automatic fixes
+`npm run reset-db`: Reset the development database
+
+*Database Management*
+`npm run restore-dev-migrations`: Apply migrations for development
+`npm run restore-dev-seeds`: Apply seeds for development
+`npm run clean-dev-migrations`: Undo all migrations
+
+*Testing*
+`npm run test`: Run the test suite with migrations
+npm run prepare-test: Prepare the test database only
+
+*Production*
+`npm start`: Run migrations and start the production server
+`npm run migrate-production`: Run migrations for production
+
+
+**Database Structure**
+```bash
+database/storage/          # Not tracked in Git
+├── .gitkeep               # Maintains folder structure
+├── database.sqlite3       # Development database
+└── database_test.sqlite3  # Test database
+```
+
+> Production Note: While SQLite is used for development and testing,
+> production environments should use a more robust solution like
+> PostgreSQL, configurable via environment variables.
+
+**Access Points**
+
+`Frontend`: http://localhost:3000
+`API`: http://localhost:3000/api/games
+
+> **Troubleshooting** 
+> If you encounter SQLite3 related errors:
+> `npm rebuild` 
+> Or specifically:
+> `npm rebuild sqlite3` 
+> 
+> You may need to do this after:
+> Switching Node.js versions, Changing operating systems, After certain dependency updates
+
+## Development Workflow
+
+**Git Flow**
+We use a modified Git Flow workflow:
+```bash
+main                  # Production releases
+   ├── develop        # Development integration
+   ├── feature/*      # Feature branches
+   ├── hotfix/*       # Production fixes
+   └── release/*      # Release candidates
+```
+**Creating a New Feature**
+Update develop branch:
+```bash
+git checkout develop
+git pull origin develop
+```
+Create a feature branch:
+```bash
+git checkout -b feature/your-feature-name
+```
+**Atomic Commits**
+We maintain atomic commits for clarity.  Commit types include:
+
+feat: New feature
+fix: Bug fix
+chore: Maintenance tasks
+docs: Documentation updates
+
+**Example commit messages:**
+```bash
+git commit -m "feat(games): add search functionality"
+git commit -m "fix(database): resolve SQLite connection issues"
+git commit -m "docs: update README with new API features"
+```
+**Before Committing:**
+
+ - Ensure tests pass:
+```
+npm run test
+```
+ - stage and commit:
+
+```bash
+git add .
+git commit
+```
+ - Create a pull request to develop.
+ - Merge using --no-ff to preserve feature history:
+
+```bash
+git checkout develop
+git merge --no-ff feature/your-feature-name
+git push origin develop
+```
 # Practical Assignments
+
 Pretend for a moment that you have been hired to work at Voodoo.  You have grabbed your first tickets to work on an internal game database application. 
 
 #### FEATURE A: Add Search to Game Database
