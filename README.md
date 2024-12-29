@@ -10,6 +10,38 @@ The theory portions of this test are more open-ended.  It is up to you how much 
 
 For the record, we are not testing to see how much free time you have, so there will be no extra credit for monumental time investments.  We are looking for concise, clear answers that demonstrate domain expertise.
 
+
+# Feedback
+
+> I want to provide feedback on the task and the current codebase. As engineers and professionals, we can always engage in constructive conversations about feedback. If my approach is debatable, I would happily discuss and adjust it from an HR and technical perspective. Confident that it offers some insights to improve your assignments if you aim to.
+> 
+> ### Refactoring and Code Structure:
+> Had I kept the initial structure and followed the original approach without refactoring, the practical portion of Part 1 would have taken me about an hour. I'm not seeking extra credit for time spent; I aim to use my time efficiently.
+> 
+> Here is the reasoning behind my decision: I wasn't sure if the existing structure was intentional or due to time constraints on your side, especially considering the codebase didn't adhere to minimal structural standards. This assignment might be given to all candidates, regardless of experience, which confused me about your expectations of me. Given the level expected for this role, clearer guidance on this point would have been very helpful, especially since some basic good practices expected of a senior developer role were not in place. 
+> 
+> Nevertheless, the refactoring chore was enjoyable, and it took to achieve the rest more comfortably since I'm accustomed to handling similar structures. My changes are still basic and would need even more production refactoring, depending on your setup. I also respected the existing codebase; as you mentioned, other products might use this code in future use cases.
+> 
+> Delivering clean, maintainable code with minimal refactoring is necessary for scalability, extensibility, and ease of understanding—this is especially true when preparing for production or CI/CD. But minimal structure is essential even when working on a take-home exercise, and this approach aligns with your request to value my time.
+> 
+> ### Commenting on Code:
+> I've added comments where necessary to explain my approach and assumptions. My practices include:
+> - **git workflow**
+> - **Testing**
+> - **Clear separation of concerns** between application logic, business logic, and setup logic
+> - **Respect for the exercise**, regardless of personal opinions
+> - **Continuous improvement of the process and codebase structure as needed**
+> 
+> This approach not only saves time but also reflects my overall practices. Well-commented code helps future developers or reviewers understand the thought process behind decisions and ultimately saves me time.
+> 
+> ### Technical Debt:
+> I fully understand that most projects come with technical debt and infrastructure challenges. In my experience, we often prioritize business needs while managing legacy code and debt. I'm comfortable working within these constraints and am always ready to collaborate with the team to find solutions that keep the business running smoothly.
+> 
+> ### Team Collaboration:
+> I am a strong team player, always focused on contributing to the team's and the business's success. I know that solving technical debt and improving infrastructure is an ongoing process. I'm committed to supporting my colleagues in these challenges while ensuring timely feature delivery. Sometimes, we work with what we have until there's time for refactoring, but we keep moving forward as a team, with a smile. :)
+> 
+> I look forward to discussing my approach to your assignments and any adjustments you think are necessary for the project.
+
 # Project Overview
 This project is a simple game database and consists of 2 components.  
 
@@ -66,5 +98,3 @@ Please elaborate an action plan.
 #### Question 2:
 Let's pretend our data team is now delivering new files every day into the S3 bucket, and our service needs to ingest those files
 every day through the populate API. Could you describe a suitable solution to automate this? Feel free to propose architectural changes.
-
-
