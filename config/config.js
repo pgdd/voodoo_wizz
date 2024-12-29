@@ -1,47 +1,49 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Fallback for NODE_ENV if it's undefined
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
-// Explicitly load the correct .env file based on NODE_ENV
-let envFile;
-if (process.env.NODE_ENV === 'production') {
-  envFile = '.env.production';
-} else if (process.env.NODE_ENV === 'test') {
-  envFile = '.env.test';
-} else {
-  envFile = '.env.development';
+// Ensure NODE_ENV is set before loading environment variables
+if (!process.env.NODE_ENV) {
+  throw new Error('NODE_ENV is not defined. Please set it before running.');
 }
 
-dotenv.config({ path: path.resolve(__dirname, '..', envFile) });
+// Load environment variables from the appropriate .env file based on NODE_ENV
+const envFile = path.resolve(__dirname, `../.env.${process.env.NODE_ENV}`);
+dotenv.config({ path: envFile });
 
-console.log(`Loading environment file: ${envFile}`);
-console.log(`NODE_ENV is set to: ${process.env.NODE_ENV}`);
+// Destructure environment variables for easy access
+const { DB_USERNAME, DB_PASSWORD, DB_NAME, DB_DIALECT, DB_HOST, DB_PORT, NODE_ENV } = process.env;
+
+// Ensure all required environment variables are available
+if (!DB_USERNAME || !DB_PASSWORD || !DB_NAME || !DB_DIALECT || !NODE_ENV) {
+  throw new Error('Missing required environment variables: DB_USERNAME, DB_PASSWORD, DB_NAME, DB_DIALECT, or NODE_ENV');
+}
+
+// Set storage path for SQLite or use host for other databases
+const storage = DB_DIALECT === 'sqlite' ? path.resolve(__dirname, '../database/storage', DB_NAME) : null;
+const host = DB_DIALECT !== 'sqlite' ? DB_HOST : null; // Use DB_HOST only for other databases
+// Common environment configuration to be reused
+const commonEnv = {
+  username: DB_USERNAME,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  dialect: DB_DIALECT,
+  storage, // Will be used only for SQLite
+  host, // Will be used for other DBs like PostgreSQL
+  port: DB_PORT,
+};
 
 module.exports = {
   development: {
-    username: process.env.DB_USERNAME || null,
-    password: process.env.DB_PASSWORD || null,
-    database: process.env.DB_NAME || 'database.sqlite3',
-    dialect: 'sqlite',
-    storage: path.resolve(__dirname, '../../', process.env.DB_NAME || 'database.sqlite3'),
-    logging: console.log,
+    ...commonEnv,
+    logging: console.log, // Debug logging for development
   },
   test: {
-    username: process.env.DB_USERNAME || null,
-    password: process.env.DB_PASSWORD || null,
-    database: process.env.DB_NAME || 'database_test.sqlite3',
-    dialect: 'sqlite',
-    storage: path.resolve(__dirname, '../../', process.env.DB_NAME || 'database_test.sqlite3'),
-    logging: false,
+    ...commonEnv,
+    logging: false, // No logging for tests
   },
   production: {
-    username: process.env.DB_USERNAME || null,
-    password: process.env.DB_PASSWORD || null,
-    database: process.env.DB_NAME || null,
-    host: process.env.DB_HOST || 80,
-    dialect: 'postgres' || null,
-    logging: false,
+    ...commonEnv,
+    host: DB_HOST, // DB_HOST defined in .env for production
+    logging: false, // No logging for production
   },
 };
