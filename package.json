@@ -4,11 +4,17 @@
   "description": "Game Viewer Tool",
   "main": "index.js",
   "scripts": {
-    "start": "node app/index.js", 
-    "setup": "node config/setup.js", 
-    "eslint": "./node_modules/.bin/eslint .",
-    "clean-test-db": "rm -f ./database_test.sqlite3",
-    "test": "npm run clean-test-db && NODE_ENV=test npm run setup && npx mocha './test/**/*.js' --exit" 
+    "eslint": "eslint --config config/.eslintrc.js . --fix",
+    "prepare-test": "NODE_ENV=test sequelize-cli db:migrate --config config/config.js --env test",
+    "test": "NODE_ENV=test npm run prepare-test && mocha './tests/**/*.js' --exit --config config/.mocharc.js",
+    "prepare-dev": "npm run eslint && npm run reset-db",
+    "dev": "npm run prepare-dev && pm2 start config/ecosystem.config.js --env development",
+    "reset-db": "NODE_ENV=development sequelize-cli db:migrate:undo:all --config config/config.js --env development && npm run restore-dev-migrations && npm run restore-dev-seeds",
+    "clean-dev-migrations": "NODE_ENV=development sequelize-cli db:migrate:undo:all --config config/config.js --env development",
+    "restore-dev-migrations": "NODE_ENV=development sequelize-cli db:migrate --config config/config.js --env development",
+    "restore-dev-seeds": "NODE_ENV=development sequelize-cli db:seed:all --config config/config.js --env development",
+    "start": "npm run migrate-production && pm2 start config/ecosystem.config.js --env production",
+    "migrate-production": "sequelize-cli db:migrate --config config/config.js --env production"
   },
   "author": "Voodoo G&A",
   "license": "ISC",
@@ -16,13 +22,14 @@
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.7",
     "express": "^4.18.2",
-    "sequelize": "^5.10.0",
-    "sequelize-cli": "^6.6.1",
-    "sqlite3": "^5.1.6"
+    "pm2": "^5.2.0",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "chai": "^4.3.8",
-    "eslint": "^8.49.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-vue": "^9.17.0",
